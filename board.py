@@ -104,7 +104,18 @@ def draw_aboard():
     screen.blit(WenBenKuangDuiXiang,KuangDuiXiang)
     screen.blit(hanjie,qq)
     pygame.display.update()
-draw_aboard()
+
+def draw_chessonboard():
+    draw_aboard()
+    for chess in red_chess.keys():
+        draw_chess(screen, chess[0], red_chess[chess]['color'], red_chess[chess]['coordinate'][0],
+                   red_chess[chess]['coordinate'][1])
+    for chess in black_chess.keys():
+        draw_chess(screen, chess[0], black_chess[chess]['color'], black_chess[chess]['coordinate'][0],
+                   black_chess[chess]['coordinate'][1])
+    global position
+
+
 
 red_color = (250,0,0)
 black_color = (0,0,0)
@@ -120,6 +131,8 @@ def Draw_cir(x,y):
 
 def draw_chess(screen,chess,color,x,y):
     #画圆
+    x = a + x * length
+    y = a + y * length
     Draw_cir(x,y)
     Font_chess = pygame.font.SysFont('SimHei',30)
     if color == 'red':
@@ -131,14 +144,293 @@ def draw_chess(screen,chess,color,x,y):
     pygame.display.update()
 
 
-def way(people,chess,s_pos,e_pos):
+def get_red_chess(pos):
+    global red_chess
+    for chess in red_chess.keys():
+        if(red_chess[chess]['coordinate']==pos):
+            print(chess)
+            return chess
+def get_black_chess(pos):
+    global black_chess
+    for chess in black_chess.keys():
+        if(black_chess[chess]['coordinate']==pos):
+            print(chess)
+            return chess
+def move(s_pos,e_pos,chess):
+    position[e_pos[1]][e_pos[0]] = position[s_pos[1]][s_pos[0]]
+    position[s_pos[1]][s_pos[0]] = 0
+    red_chess[chess]['coordinate'] = e_pos
+    draw_chessonboard()
+def way(people,s_pos,e_pos):
     if people == 0:#红棋
-        if chess == 1:
-            if e_pos[0] in range (3,5)and e_pos[1]in range(0,3):
+        chess = get_red_chess(s_pos)
+        if chess[0] == '将':
+            if e_pos[0] in range (3,6)and e_pos[1]in range(0,3):
+                if ( abs(s_pos[0]-e_pos[0]) == 1 and abs(s_pos[1]-e_pos[1]) == 0 ) or \
+                        ( abs(s_pos[0]-e_pos[0]) == 0 and abs(s_pos[1]-e_pos[1]) == 1):
+                    print(s_pos, e_pos)
 
-                print(s_pos,e_pos)
-        else:
-            print("ERROR!")
+                    move(s_pos, e_pos,chess)
+                else:
+                    print("ERROR!")
+            else:
+                print("ERROR!")
+        if chess[0] == '士':
+            if e_pos[0] in range (3,6)and e_pos[1]in range(0,3):
+                if ( abs(s_pos[0]-e_pos[0]) == 1 and abs(s_pos[1]-e_pos[1]) == 1 ) or \
+                        ( abs(s_pos[0]-e_pos[0]) == 1 and abs(s_pos[1]-e_pos[1]) == 1):
+
+                    print(s_pos, e_pos)
+                    move(s_pos, e_pos, chess)
+
+                else:
+                    print("ERROR!")
+            else:
+                print("ERROR!")
+        if chess[0]=='相':
+            if e_pos[0] in range(0, 9) and e_pos[1] in range(0, 5):
+                if (abs(s_pos[0] - e_pos[0]) == 2 and abs(s_pos[1] - e_pos[1]) == 2) or \
+                        (abs(s_pos[0] - e_pos[0]) == 2 and abs(s_pos[1] - e_pos[1]) == 2):
+                    print(s_pos, e_pos)
+
+                    move(s_pos, e_pos,chess)
+                else:
+                    print("ERROR!")
+            else:
+                print("ERROR!")
+        if chess[0]=='马':
+             if abs(e_pos[0]-s_pos[0])==1 and abs(e_pos[1]-s_pos[1])==2:
+                 if position[int((e_pos[1]+s_pos[1])/2)][s_pos[0]] == 0:
+                     move(s_pos, e_pos,chess)
+                 else:
+                     print("error1")
+             elif abs(e_pos[0]-s_pos[0])==2 and abs(e_pos[1]-s_pos[1])==1:
+                 if position[s_pos[1]][int((e_pos[0]+s_pos[0])/2)] == 0:
+                     move(s_pos, e_pos,chess)
+                 else:
+                     print("error2")
+             else:
+                 print("error3")
+        if chess[0]=='車':
+            act = 1
+            if (s_pos[0]-e_pos[0])==0 :
+                if s_pos[1]<e_pos[1]:
+                    for i in range(s_pos[1]+1,e_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error1")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[1]>e_pos[1]:
+                    for i in range(e_pos[1]+1,s_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error2")
+                            act = 0
+                            break
+                   # move(s_pos, e_pos,chess)
+            elif (s_pos[1]-e_pos[1])==0 :
+                if s_pos[0]<e_pos[0]:
+                    for i in range(s_pos[0]+1,e_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error3")
+                            act = 0
+                            break
+                    #move(s_pos,e_pos,chess)
+                if s_pos[0]>e_pos[0]:
+                    for i in range(e_pos[0]+1,s_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error4")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[0]==e_pos[0]:
+                    print("error5")
+                    act = 0
+            else:
+                print("error6")
+                act = 0
+            if(act == 1):
+                move(s_pos, e_pos, chess)
+            else:
+                pass
+        if chess[0]=='炮':
+
+            act = 1
+            if (s_pos[0]-e_pos[0])==0 :
+                if s_pos[1]<e_pos[1]:
+                    for i in range(s_pos[1]+1,e_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error1")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[1]>e_pos[1]:
+                    for i in range(e_pos[1]+1,s_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error2")
+                            act = 0
+                            break
+                   # move(s_pos, e_pos,chess)
+            elif (s_pos[1]-e_pos[1])==0 :
+                if s_pos[0]<e_pos[0]:
+                    for i in range(s_pos[0]+1,e_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error3")
+                            act = 0
+                            break
+                    #move(s_pos,e_pos,chess)
+                if s_pos[0]>e_pos[0]:
+                    for i in range(e_pos[0]+1,s_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error4")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[0]==e_pos[0]:
+                    print("error5")
+                    act = 0
+            else:
+                print("error6")
+                act = 0
+            if(act == 1):
+                move(s_pos, e_pos, chess)
+            else:
+                pass
+    if people == 1:#黑棋
+        chess = get_black_chess(s_pos)
+        if chess[0] == '将':
+            if e_pos[0] in range (3,6)and e_pos[1]in range(0,3):
+                if ( abs(s_pos[0]-e_pos[0]) == 1 and abs(s_pos[1]-e_pos[1]) == 0 ) or \
+                        ( abs(s_pos[0]-e_pos[0]) == 0 and abs(s_pos[1]-e_pos[1]) == 1):
+                    print(s_pos, e_pos)
+
+                    move(s_pos, e_pos,chess)
+                else:
+                    print("ERROR!")
+            else:
+                print("ERROR!")
+        if chess[0] == '仕':
+            if e_pos[0] in range (3,6)and e_pos[1]in range(0,3):
+                if ( abs(s_pos[0]-e_pos[0]) == 1 and abs(s_pos[1]-e_pos[1]) == 1 ) or \
+                        ( abs(s_pos[0]-e_pos[0]) == 1 and abs(s_pos[1]-e_pos[1]) == 1):
+
+                    print(s_pos, e_pos)
+                    move(s_pos, e_pos, chess)
+
+                else:
+                    print("ERROR!")
+            else:
+                print("ERROR!")
+        if chess[0]=='象':
+            if e_pos[0] in range(0, 9) and e_pos[1] in range(0, 5):
+                if (abs(s_pos[0] - e_pos[0]) == 2 and abs(s_pos[1] - e_pos[1]) == 2) or \
+                        (abs(s_pos[0] - e_pos[0]) == 2 and abs(s_pos[1] - e_pos[1]) == 2):
+                    print(s_pos, e_pos)
+
+                    move(s_pos, e_pos,chess)
+                else:
+                    print("ERROR!")
+            else:
+                print("ERROR!")
+        if chess[0]=='马':
+             if abs(e_pos[0]-s_pos[0])==1 and abs(e_pos[1]-s_pos[1])==2:
+                 if position[int((e_pos[1]+s_pos[1])/2)][s_pos[0]] == 0:
+                     move(s_pos, e_pos,chess)
+                 else:
+                     print("error1")
+             elif abs(e_pos[0]-s_pos[0])==2 and abs(e_pos[1]-s_pos[1])==1:
+                 if position[s_pos[1]][int((e_pos[0]+s_pos[0])/2)] == 0:
+                     move(s_pos, e_pos,chess)
+                 else:
+                     print("error2")
+             else:
+                 print("error3")
+        if chess[0]=='車':
+            act = 1
+            if (s_pos[0]-e_pos[0])==0 :
+                if s_pos[1]<e_pos[1]:
+                    for i in range(s_pos[1]+1,e_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error1")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[1]>e_pos[1]:
+                    for i in range(e_pos[1]+1,s_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error2")
+                            act = 0
+                            break
+                   # move(s_pos, e_pos,chess)
+            elif (s_pos[1]-e_pos[1])==0 :
+                if s_pos[0]<e_pos[0]:
+                    for i in range(s_pos[0]+1,e_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error3")
+                            act = 0
+                            break
+                    #move(s_pos,e_pos,chess)
+                if s_pos[0]>e_pos[0]:
+                    for i in range(e_pos[0]+1,s_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error4")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[0]==e_pos[0]:
+                    print("error5")
+                    act = 0
+            else:
+                print("error6")
+                act = 0
+            if(act == 1):
+                move(s_pos, e_pos, chess)
+            else:
+                pass
+        if chess[0]=='炮':
+
+            act = 1
+            if (s_pos[0]-e_pos[0])==0 :
+                if s_pos[1]<e_pos[1]:
+                    for i in range(s_pos[1]+1,e_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error1")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[1]>e_pos[1]:
+                    for i in range(e_pos[1]+1,s_pos[1]):
+                        if position[i][s_pos[0]] != 0:
+                            print("error2")
+                            act = 0
+                            break
+                   # move(s_pos, e_pos,chess)
+            elif (s_pos[1]-e_pos[1])==0 :
+                if s_pos[0]<e_pos[0]:
+                    for i in range(s_pos[0]+1,e_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error3")
+                            act = 0
+                            break
+                    #move(s_pos,e_pos,chess)
+                if s_pos[0]>e_pos[0]:
+                    for i in range(e_pos[0]+1,s_pos[0]):
+                        if position[s_pos[1]][i] != 0:
+                            print("error4")
+                            act = 0
+                            break
+                    #move(s_pos, e_pos,chess)
+                if s_pos[0]==e_pos[0]:
+                    print("error5")
+                    act = 0
+            else:
+                print("error6")
+                act = 0
+            if(act == 1):
+                move(s_pos, e_pos, chess)
+            else:
+                pass
+
 def red_move():
 
     global begin
@@ -156,7 +448,7 @@ def red_move():
                 y = int((position_y - a + length / 2) / length)
                 print(x, y,"qi")
 
-                if position[y][x] == 0:
+                if position[y][x] == 0 or position[y][x]>7:
                     print("请选择一个棋子！！！")
                 else:
                     chess = position[y][x]
@@ -179,14 +471,17 @@ def red_move():
                     position_x > a - length / 2) and (position_y > a - length / 2):
                 x = int((position_x - a + length / 2) / length)
                 y = int((position_y - a + length / 2) / length)
-                print(x, y,"sds")
+                print(x, y)
                 end_pos = [x,y]
                 print(begin)
-                print("dsd")
+               # print("dsd")
                 begin = not begin
-                global start_pos,chess
-                way(0, chess, start_pos, end_pos)
-                continue
+                if position[y][x] == 0:
+                    global start_pos,chess
+                    way(0, start_pos, end_pos)
+                    continue
+                else:
+                    print("zijide qi")
             else:
                 print("请选择正确的位置！！！")
                 pass
@@ -194,11 +489,57 @@ def red_move():
 
 
 def black_move():
-    a=1
+    global begin
+    for event in pygame.event.get():
+        # print(pygame.event.__sizeof__())
+        if event.type == QUIT:
+            sys.exit()
+        # print(begin)
+        # 起始位置
+        if event.type == MOUSEBUTTONDOWN and begin == True:
+            position_x, position_y = pygame.mouse.get_pos()
+            if (position_x < a + 8 * length + length / 2) and (position_y < a + 9 * length + length / 2) and (
+                    position_x > a - length / 2) and (position_y > a - length / 2):
+                x = int((position_x - a + length / 2) / length)
+                y = int((position_y - a + length / 2) / length)
+                print(x, y, "qi")
 
+                if position[y][x] == 0 or position[y][x] > 7:
+                    print("请选择一个棋子！！！")
+                else:
+                    chess = position[y][x]
 
+                    start_pos = [x, y]
+                    begin = not begin
 
+                    #  print("ewwe")
 
+                    continue
+            else:
+                print("请选择正确的位置！！！")
+                pass
+
+        # 终点
+        if event.type == MOUSEBUTTONDOWN and begin == False:
+            position_x, position_y = pygame.mouse.get_pos()
+            if (position_x < a + 8 * length + length / 2) and (position_y < a + 9 * length + length / 2) and (
+                    position_x > a - length / 2) and (position_y > a - length / 2):
+                x = int((position_x - a + length / 2) / length)
+                y = int((position_y - a + length / 2) / length)
+                print(x, y)
+                end_pos = [x, y]
+                print(begin)
+                # print("dsd")
+                begin = not begin
+                if position[y][x] == 0:
+                    global start_pos, chess
+                    way(1, start_pos, end_pos)
+                    continue
+                else:
+                    print("zijide qi")
+            else:
+                print("请选择正确的位置！！！")
+                pass
 
 
 def main():
@@ -206,45 +547,43 @@ def main():
     global black_chess
     print("we")
     red_chess={
-        '将': {'color': 'red', 'position': [a + 4 * length, a]},
-        '士1': {'color': 'red', 'position': [a + 3 * length, a]},
-        '士2': {'color': 'red', 'position': [a + 5 * length, a]},
-        '相1': {'color': 'red', 'position': [a + 2 * length, a]},
-        '相2': {'color': 'red', 'position': [a + 6 * length, a]},
-        '马1': {'color': 'red', 'position': [a + 1 * length, a]},
-        '马2': {'color': 'red', 'position': [a + 7 * length, a]},
-        '車1': {'color': 'red', 'position': [a + 0 * length, a]},
-        '車2': {'color': 'red', 'position': [a + 8 * length, a]},
-        '炮1': {'color': 'red', 'position': [a + 1 * length, a + 2 * length]},
-        '炮2': {'color': 'red', 'position': [a + 7 * length, a + 2 * length]},
-        '兵1': {'color': 'red', 'position': [a + 0 * length, a + 3 * length]},
-        '兵2': {'color': 'red', 'position': [a + 2 * length, a + 3 * length]},
-        '兵3': {'color': 'red', 'position': [a + 4 * length, a + 3 * length]},
-        '兵4': {'color': 'red', 'position': [a + 6 * length, a + 3 * length]},
-        '兵5': {'color': 'red', 'position': [a + 8 * length, a + 3 * length]},
+        '将': {'color': 'red', 'position': [a + 4 * length, a],'coordinate':[4,0]},
+        '士1': {'color': 'red', 'position': [a + 3 * length, a],'coordinate':[3,0]},
+        '士2': {'color': 'red', 'position': [a + 5 * length, a],'coordinate':[5,0]},
+        '相1': {'color': 'red', 'position': [a + 2 * length, a],'coordinate':[2,0]},
+        '相2': {'color': 'red', 'position': [a + 6 * length, a],'coordinate':[6,0]},
+        '马1': {'color': 'red', 'position': [a + 1 * length, a],'coordinate':[1,0]},
+        '马2': {'color': 'red', 'position': [a + 7 * length, a],'coordinate':[7,0]},
+        '車1': {'color': 'red', 'position': [a + 0 * length, a],'coordinate':[0,0]},
+        '車2': {'color': 'red', 'position': [a + 8 * length, a],'coordinate':[8,0]},
+        '炮1': {'color': 'red', 'position': [a + 1 * length, a + 2 * length],'coordinate':[1,2]},
+        '炮2': {'color': 'red', 'position': [a + 7 * length, a + 2 * length],'coordinate':[7,2]},
+        '兵1': {'color': 'red', 'position': [a + 0 * length, a + 3 * length],'coordinate':[0,3]},
+        '兵2': {'color': 'red', 'position': [a + 2 * length, a + 3 * length],'coordinate':[2,3]},
+        '兵3': {'color': 'red', 'position': [a + 4 * length, a + 3 * length],'coordinate':[4,3]},
+        '兵4': {'color': 'red', 'position': [a + 6 * length, a + 3 * length],'coordinate':[6,3]},
+        '兵5': {'color': 'red', 'position': [a + 8 * length, a + 3 * length],'coordinate':[8,3]},
     }
     black_chess = {
-        '将': {'color': 'black', 'position': [a + 4 * length, a + 9 * length]},
-        '仕1': {'color': 'black', 'position': [a + 3 * length, a + 9 * length]},
-        '仕2': {'color': 'black', 'position': [a + 5 * length, a + 9 * length]},
-        '象1': {'color': 'black', 'position': [a + 2 * length, a + 9 * length]},
-        '象2': {'color': 'black', 'position': [a + 6 * length, a + 9 * length]},
-        '马1': {'color': 'black', 'position': [a + 1 * length, a + 9 * length]},
-        '马2': {'color': 'black', 'position': [a + 7 * length, a + 9 * length]},
-        '車1': {'color': 'black', 'position': [a + 0 * length, a + 9 * length]},
-        '車2': {'color': 'black', 'position': [a + 8 * length, a + 9 * length]},
-        '炮1': {'color': 'black', 'position': [a + 1 * length, a + 7 * length]},
-        '炮2': {'color': 'black', 'position': [a + 7 * length, a + 7 * length]},
-        '卒1': {'color': 'black', 'position': [a + 0 * length, a + 6 * length]},
-        '卒2': {'color': 'black', 'position': [a + 2 * length, a + 6 * length]},
-        '卒3': {'color': 'black', 'position': [a + 4 * length, a + 6 * length]},
-        '卒4': {'color': 'black', 'position': [a + 6 * length, a + 6 * length]},
-        '卒5': {'color': 'black', 'position': [a + 8 * length, a + 6 * length]},
+        '将': {'color': 'black', 'position': [a + 4 * length, a + 9 * length],'coordinate':[4,9]},
+        '仕1': {'color': 'black', 'position': [a + 3 * length, a + 9 * length],'coordinate':[3,9]},
+        '仕2': {'color': 'black', 'position': [a + 5 * length, a + 9 * length],'coordinate':[5,9]},
+        '象1': {'color': 'black', 'position': [a + 2 * length, a + 9 * length],'coordinate':[2,9]},
+        '象2': {'color': 'black', 'position': [a + 6 * length, a + 9 * length],'coordinate':[6,9]},
+        '马1': {'color': 'black', 'position': [a + 1 * length, a + 9 * length],'coordinate':[1,9]},
+        '马2': {'color': 'black', 'position': [a + 7 * length, a + 9 * length],'coordinate':[7,9]},
+        '車1': {'color': 'black', 'position': [a + 0 * length, a + 9 * length],'coordinate':[0,9]},
+        '車2': {'color': 'black', 'position': [a + 8 * length, a + 9 * length],'coordinate':[8,9]},
+        '炮1': {'color': 'black', 'position': [a + 1 * length, a + 7 * length],'coordinate':[1,7]},
+        '炮2': {'color': 'black', 'position': [a + 7 * length, a + 7 * length],'coordinate':[7,7]},
+        '卒1': {'color': 'black', 'position': [a + 0 * length, a + 6 * length],'coordinate':[0,6]},
+        '卒2': {'color': 'black', 'position': [a + 2 * length, a + 6 * length],'coordinate':[2,6]},
+        '卒3': {'color': 'black', 'position': [a + 4 * length, a + 6 * length],'coordinate':[4,6]},
+        '卒4': {'color': 'black', 'position': [a + 6 * length, a + 6 * length],'coordinate':[6,6]},
+        '卒5': {'color': 'black', 'position': [a + 8 * length, a + 6 * length],'coordinate':[8,6]},
     }
-    for chess in red_chess.keys():
-        draw_chess(screen,chess[0],red_chess[chess]['color'],red_chess[chess]['position'][0],red_chess[chess]['position'][1])
-    for chess in black_chess.keys():
-        draw_chess(screen,chess[0],black_chess[chess]['color'],black_chess[chess]['position'][0],black_chess[chess]['position'][1])
+    draw_chessonboard()
+
     global position
     position = [
         [5, 4, 3, 2, 1, 2, 3, 4, 5],
@@ -264,14 +603,18 @@ def main():
     start_pos = (0, 0)
     end_pos = (0, 0)
     chess = 0
+    who = 0
     while True:
-        who = 0
-        if who == 0:
+        for event in pygame.event.get():
+            # print(pygame.event.__sizeof__())
+            if event.type == QUIT:
+                sys.exit()
+        if who == 1:
             red_move()
-            who = not who
-        if  who == 1:
+
+        if  who == 0:
             black_move()
-            who = not who
+        who = not who
         screen.fill([255,255,255])
 
 if __name__ == "__main__":
