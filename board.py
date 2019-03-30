@@ -131,6 +131,73 @@ def draw_chess(screen,chess,color,x,y):
     pygame.display.update()
 
 
+def way(people,chess,s_pos,e_pos):
+    if people == 0:#红棋
+        if chess == 1:
+            #way_jiang(p)
+            print(s_pos,e_pos)
+def red_move():
+    start_pos = (0, 0)
+    end_pos = (0, 0)
+    chess = 0
+
+    for event in pygame.event.wait():
+       # print(pygame.event.__sizeof__())
+        if event.type == QUIT:
+            sys.exit()
+        print(begin)
+        #起始位置
+        if event.type == MOUSEBUTTONDOWN and begin == True:
+            position_x, position_y = pygame.mouse.get_pos()
+            if (position_x < a + 8 * length + length / 2) and (position_y < a + 9 * length + length / 2) and (
+                    position_x > a - length / 2) and (position_y > a - length / 2):
+                x = int((position_x - a + length / 2) / length)
+                y = int((position_y - a + length / 2) / length)
+                print(x, y,"qi")
+
+                if position[y][x] == 0:
+                    print("请选择一个棋子！！！")
+                else:
+                    chess = position[y][x]
+
+                    start_pos = [x,y]
+                    begin = not begin
+                    continue
+                  #  print("ewwe")
+                    #way(1,chess,start_pos,end_pos)
+            else:
+                print("请选择正确的位置！！！")
+                pass
+
+
+        #终点
+        if event.type == MOUSEBUTTONDOWN and begin == False:
+            position_x, position_y = pygame.mouse.get_pos()
+            if (position_x < a + 8 * length + length / 2) and (position_y < a + 9 * length + length / 2) and (
+                    position_x > a - length / 2) and (position_y > a - length / 2):
+                x = int((position_x - a + length / 2) / length)
+                y = int((position_y - a + length / 2) / length)
+                print(x, y,"sds")
+                end_pos = [x,y]
+                print(begin)
+                print("dsd")
+                begin = not begin
+
+                continue
+            else:
+                print("请选择正确的位置！！！")
+                pass
+
+
+
+def black_move():
+    a=1
+
+
+
+
+
+
 def main():
     global red_chess
     global black_chess
@@ -175,16 +242,30 @@ def main():
         draw_chess(screen,chess[0],red_chess[chess]['color'],red_chess[chess]['position'][0],red_chess[chess]['position'][1])
     for chess in black_chess.keys():
         draw_chess(screen,chess[0],black_chess[chess]['color'],black_chess[chess]['position'][0],black_chess[chess]['position'][1])
+    global position
+    position = [
+        [5, 4, 3, 2, 1, 2, 3, 4, 5],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 6, 0, 0, 0, 0, 0, 6, 0],
+        [7, 0, 7, 0, 7, 0, 7, 0, 7],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [14, 0, 14, 0, 14, 0, 14, 0, 14],
+        [0, 13, 0, 0, 0, 0, 0, 13, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [12, 11, 10, 9, 8, 9, 10, 11, 12]
+    ]
 
 
     while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                sys.exit()
-
+        who = 0
+        if who == 0:
+            red_move()
+            who = not who
+        if  who == 1:
+            black_move()
+            who = not who
         screen.fill([255,255,255])
-
-
 
 if __name__ == "__main__":
     try:
