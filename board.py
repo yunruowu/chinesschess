@@ -134,18 +134,19 @@ def draw_chess(screen,chess,color,x,y):
 def way(people,chess,s_pos,e_pos):
     if people == 0:#红棋
         if chess == 1:
-            #way_jiang(p)
-            print(s_pos,e_pos)
-def red_move():
-    start_pos = (0, 0)
-    end_pos = (0, 0)
-    chess = 0
+            if e_pos[0] in range (3,5)and e_pos[1]in range(0,3):
 
-    for event in pygame.event.wait():
+                print(s_pos,e_pos)
+        else:
+            print("ERROR!")
+def red_move():
+
+    global begin
+    for event in pygame.event.get():
        # print(pygame.event.__sizeof__())
         if event.type == QUIT:
             sys.exit()
-        print(begin)
+        #print(begin)
         #起始位置
         if event.type == MOUSEBUTTONDOWN and begin == True:
             position_x, position_y = pygame.mouse.get_pos()
@@ -162,9 +163,10 @@ def red_move():
 
                     start_pos = [x,y]
                     begin = not begin
-                    continue
+
                   #  print("ewwe")
-                    #way(1,chess,start_pos,end_pos)
+
+                    continue
             else:
                 print("请选择正确的位置！！！")
                 pass
@@ -182,7 +184,8 @@ def red_move():
                 print(begin)
                 print("dsd")
                 begin = not begin
-
+                global start_pos,chess
+                way(0, chess, start_pos, end_pos)
                 continue
             else:
                 print("请选择正确的位置！！！")
@@ -256,7 +259,11 @@ def main():
         [12, 11, 10, 9, 8, 9, 10, 11, 12]
     ]
 
-
+    global begin
+    begin = True
+    start_pos = (0, 0)
+    end_pos = (0, 0)
+    chess = 0
     while True:
         who = 0
         if who == 0:
