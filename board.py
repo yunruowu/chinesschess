@@ -609,6 +609,7 @@ def main():
             # print(pygame.event.__sizeof__())
             if event.type == QUIT:
                 sys.exit()
+
         if who == 1:
             red_move()
 
