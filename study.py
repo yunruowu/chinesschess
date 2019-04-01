@@ -206,6 +206,7 @@ def way(people, s_pos, e_pos):
 
                     move(people,s_pos, e_pos, chess)
                 else:
+
                     print("ERROR!")
             else:
                 print("ERROR!")
@@ -585,16 +586,18 @@ def chess_move():
             print(x, y, "qi")
             if master == True:#红方
                 if position[y][x] == 0 or position[y][x] > 7:  # 选择了红棋
-                    print("请选择一个己方棋子！！！")
+                    print("请选择一个红方棋子！！！")
                     master = True
+                    begin = not begin
                 else:
                     chess = position[y][x]
                     master = not master
                     start_pos = [x, y]
             else:#黑方
                 if position[y][x] == 0 or position[y][x] < 8:
-                    print("请选择一个己方棋子！！！")
+                    print("请选择一个黑方棋子！！！")
                     master = False
+                    begin = not begin
                 else:
                     chess = position[y][x]
                     master = not master
@@ -634,12 +637,18 @@ def chess_move():
                 if master == False and position[y][x]>7:#红棋吃子
                     way(2, start_pos, end_pos)
                     print("h1xc")
-                if master == True and position[y][x]<8:#黑旗吃子
-                    way(3, start_pos, end_pos)
-                    print("h2w")
+                elif master == False and position[y][x]<8:#红棋连续点了两次
+                    print("重新选择红棋")
+                    begin = True
+                    master = True
                 else:
-                    begin = not begin#仍要选择落子的位置
-                    print("zijide qi")
+                    if master == True and position[y][x]<8:#黑旗吃子
+                        way(3, start_pos, end_pos)
+                        print("h2w")
+                    else:
+                        print("重新选择红棋")
+                        begin = True
+                        master = False
         else:
             print("请选择正确的位置！！！")
             begin =  begin
