@@ -516,8 +516,6 @@ def way(people, s_pos, e_pos):
                 else:
                     pass
             else:
-
-
                 act = 0
                 if (s_pos[0] - e_pos[0]) == 0:
                     if s_pos[1] < e_pos[1]:
