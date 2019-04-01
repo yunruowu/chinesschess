@@ -172,8 +172,6 @@ def get_black_chess(pos):
 
 
 def move(p,s_pos, e_pos, chess):
-
-
     if p == 0:#红移动
         red_chess[chess]['coordinate'] = e_pos
     if p == 1:#黑移动
