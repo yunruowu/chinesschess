@@ -577,6 +577,7 @@ def chess_move():
     global master
     if begin == True:  # 选择第一个棋子
         position_x, position_y = pygame.mouse.get_pos()
+        #鼠标点击的位置在棋盘内
         if (position_x < a + 8 * length + length / 2) and (position_y < a + 9 * length + length / 2) and (
                 position_x > a - length / 2) and (position_y > a - length / 2):
             x = int((position_x - a + length / 2) / length)
@@ -585,27 +586,30 @@ def chess_move():
             if master == True:#红方
                 if position[y][x] == 0 or position[y][x] > 7:  # 选择了红棋
                     print("请选择一个己方棋子！！！")
+                    master = True
                 else:
                     chess = position[y][x]
-
+                    master = not master
                     start_pos = [x, y]
             else:#黑方
                 if position[y][x] == 0 or position[y][x] < 8:
                     print("请选择一个己方棋子！！！")
+                    master = False
                 else:
                     chess = position[y][x]
-
+                    master = not master
                     start_pos = [x, y]
 
-                    #  print("ewwe")
-
+            #选在落点
+            begin = not begin
 
         else:
             print("请选择正确的位置！！！")
+            begin =  True
             pass
 
         # 终点
-    if begin == False:  # 选择落子的位置
+    else:  # 选择落子的位置
         position_x, position_y = pygame.mouse.get_pos()
         if (position_x < a + 8 * length + length / 2) and (position_y < a + 9 * length + length / 2) and (
                 position_x > a - length / 2) and (position_y > a - length / 2):
@@ -613,12 +617,13 @@ def chess_move():
             y = int((position_y - a + length / 2) / length)
             print(x, y)
             end_pos = [x, y]
+            begin = not begin
             print(begin)
             # print("dsd")
-
+            #由于master已经修改，所以此时的master为相反的
             if position[y][x] == 0:  # 位置为空,移动
                 global start_pos, chess,master
-                if master==True:
+                if master==False:#红
                     way(0, start_pos, end_pos)
                     print("h1y")
                 else:
@@ -626,21 +631,20 @@ def chess_move():
                     print("h2y")
 
             else:
-                if master == True and position[y][x]>7:#红棋吃子
+                if master == False and position[y][x]>7:#红棋吃子
                     way(2, start_pos, end_pos)
                     print("h1xc")
-                if master == False and position[y][x]<8:#黑旗吃子
+                if master == True and position[y][x]<8:#黑旗吃子
                     way(3, start_pos, end_pos)
                     print("h2w")
                 else:
+                    begin = not begin#仍要选择落子的位置
                     print("zijide qi")
-
-
-            master = not master
         else:
             print("请选择正确的位置！！！")
+            begin =  begin
             pass
-    begin = not begin
+
 
 
 
@@ -756,6 +760,9 @@ def main():
     global begin,master
     begin = True
     master = True
+    global start_pos
+    global end_pos
+    global chess
     start_pos = (0, 0)
     end_pos = (0, 0)
     chess = 0
