@@ -182,10 +182,16 @@ def move(p,s_pos, e_pos, chess):
         red_chess[chess]['coordinate'] = e_pos
         chess_1 = get_black_chess(e_pos)
         black_chess[chess_1]['coordinate']=[-2,-2]
+        if chess_1=='将':
+            print("红胜利")
+            sys.exit()
     if p == 3:#黑方吃子
         black_chess[chess]['coordinate'] = e_pos
         chess_1 = get_red_chess(e_pos)
         red_chess[chess_1]['coordinate'] = [-2, -2]
+        if chess_1=='帅':
+            print("黑胜利")
+            sys.exit()
     position[e_pos[1]][e_pos[0]] = position[s_pos[1]][s_pos[0]]
     position[s_pos[1]][s_pos[0]] = 0
     draw_chessonboard()
@@ -194,7 +200,7 @@ def move(p,s_pos, e_pos, chess):
 def way(people, s_pos, e_pos):
     if people == 0 or people == 2:  # 红棋
         chess = get_red_chess(s_pos)
-        if chess[0] == '将':
+        if chess[0] == '帅':
             if e_pos[0] in range(3, 6) and e_pos[1] in range(0, 3):
                 if (abs(s_pos[0] - e_pos[0]) == 1 and abs(s_pos[1] - e_pos[1]) == 0) or \
                         (abs(s_pos[0] - e_pos[0]) == 0 and abs(s_pos[1] - e_pos[1]) == 1):
@@ -698,7 +704,7 @@ def main():
     global black_chess
     print("we")
     red_chess = {
-        '将': {'color': 'red', 'position': [a + 4 * length, a], 'coordinate': [4, 0]},
+        '帅': {'color': 'red', 'position': [a + 4 * length, a], 'coordinate': [4, 0]},
         '士1': {'color': 'red', 'position': [a + 3 * length, a], 'coordinate': [3, 0]},
         '士2': {'color': 'red', 'position': [a + 5 * length, a], 'coordinate': [5, 0]},
         '相1': {'color': 'red', 'position': [a + 2 * length, a], 'coordinate': [2, 0]},
@@ -757,10 +763,12 @@ def main():
     chess = 0
     who = 0
     while True:
+
         for event in pygame.event.get():
             # print(pygame.event.__sizeof__())
             if event.type == QUIT:
                 sys.exit()
+
             if event.type == MOUSEBUTTONDOWN:
                 chess_move()
 
