@@ -172,17 +172,27 @@ def get_black_chess(pos):
 
 
 def move(p,s_pos, e_pos, chess):
+
+
+    if p == 0:#红移动
+        red_chess[chess]['coordinate'] = e_pos
+    if p == 1:#黑移动
+        black_chess[chess]['coordinate'] = e_pos
+    if p == 2:#红方吃子
+        red_chess[chess]['coordinate'] = e_pos
+        chess_1 = get_black_chess(e_pos)
+        black_chess[chess_1]['coordinate']=[-2,-2]
+    if p == 3:#黑方吃子
+        black_chess[chess]['coordinate'] = e_pos
+        chess_1 = get_red_chess(e_pos)
+        red_chess[chess_1]['coordinate'] = [-2, -2]
     position[e_pos[1]][e_pos[0]] = position[s_pos[1]][s_pos[0]]
     position[s_pos[1]][s_pos[0]] = 0
-    if p ==1:
-        red_chess[chess]['coordinate'] = e_pos
-    else:
-        black_chess[chess]['coordinate'] = e_pos
     draw_chessonboard()
 
 
 def way(people, s_pos, e_pos):
-    if people == 0:  # 红棋
+    if people == 0 or people == 2:  # 红棋
         chess = get_red_chess(s_pos)
         if chess[0] == '将':
             if e_pos[0] in range(3, 6) and e_pos[1] in range(0, 3):
@@ -190,7 +200,7 @@ def way(people, s_pos, e_pos):
                         (abs(s_pos[0] - e_pos[0]) == 0 and abs(s_pos[1] - e_pos[1]) == 1):
                     print(s_pos, e_pos)
 
-                    move(1,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("ERROR!")
             else:
@@ -201,19 +211,19 @@ def way(people, s_pos, e_pos):
                         (abs(s_pos[0] - e_pos[0]) == 1 and abs(s_pos[1] - e_pos[1]) == 1):
 
                     print(s_pos, e_pos)
-                    move(1,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
 
                 else:
-                    print("ERROR!")
+                    print("ERROR1!")
             else:
-                print("ERROR!")
+                print("ERROR2!")
         if chess[0] == '相':
             if e_pos[0] in range(0, 9) and e_pos[1] in range(0, 5):
                 if (abs(s_pos[0] - e_pos[0]) == 2 and abs(s_pos[1] - e_pos[1]) == 2) or \
                         (abs(s_pos[0] - e_pos[0]) == 2 and abs(s_pos[1] - e_pos[1]) == 2):
                     print(s_pos, e_pos)
 
-                    move(1,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("ERROR!")
             else:
@@ -221,12 +231,12 @@ def way(people, s_pos, e_pos):
         if chess[0] == '马':
             if abs(e_pos[0] - s_pos[0]) == 1 and abs(e_pos[1] - s_pos[1]) == 2:
                 if position[int((e_pos[1] + s_pos[1]) / 2)][s_pos[0]] == 0:
-                    move(1,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("error1")
             elif abs(e_pos[0] - s_pos[0]) == 2 and abs(e_pos[1] - s_pos[1]) == 1:
                 if position[s_pos[1]][int((e_pos[0] + s_pos[0]) / 2)] == 0:
-                    move(1,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("error2")
             else:
@@ -270,66 +280,107 @@ def way(people, s_pos, e_pos):
                 print("error6")
                 act = 0
             if (act == 1):
-                move(1,s_pos, e_pos, chess)
+                move(people,s_pos, e_pos, chess)
             else:
                 pass
         if chess[0] == '炮':
-
-            act = 1
-            if (s_pos[0] - e_pos[0]) == 0:
-                if s_pos[1] < e_pos[1]:
-                    for i in range(s_pos[1] + 1, e_pos[1]):
-                        if position[i][s_pos[0]] != 0:
-                            print("error1")
-                            act = 0
-                            break
+            if(people==0):#移动
+                act = 1
+                if (s_pos[0] - e_pos[0]) == 0:
+                    if s_pos[1] < e_pos[1]:
+                        for i in range(s_pos[1] + 1, e_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error1")
+                                act = 0
+                                break
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[1] > e_pos[1]:
+                        for i in range(e_pos[1] + 1, s_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error2")
+                                act = 0
+                                break
                     # move(s_pos, e_pos,chess)
-                if s_pos[1] > e_pos[1]:
-                    for i in range(e_pos[1] + 1, s_pos[1]):
-                        if position[i][s_pos[0]] != 0:
-                            print("error2")
-                            act = 0
-                            break
-                # move(s_pos, e_pos,chess)
-            elif (s_pos[1] - e_pos[1]) == 0:
-                if s_pos[0] < e_pos[0]:
-                    for i in range(s_pos[0] + 1, e_pos[0]):
-                        if position[s_pos[1]][i] != 0:
-                            print("error3")
-                            act = 0
-                            break
-                    # move(s_pos,e_pos,chess)
-                if s_pos[0] > e_pos[0]:
-                    for i in range(e_pos[0] + 1, s_pos[0]):
-                        if position[s_pos[1]][i] != 0:
-                            print("error4")
-                            act = 0
-                            break
-                    # move(s_pos, e_pos,chess)
-                if s_pos[0] == e_pos[0]:
-                    print("error5")
+                elif (s_pos[1] - e_pos[1]) == 0:
+                    if s_pos[0] < e_pos[0]:
+                        for i in range(s_pos[0] + 1, e_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error3")
+                                act = 0
+                                break
+                        # move(s_pos,e_pos,chess)
+                    if s_pos[0] > e_pos[0]:
+                        for i in range(e_pos[0] + 1, s_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error4")
+                                act = 0
+                                break
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[0] == e_pos[0]:
+                        print("error5")
+                        act = 0
+                else:
+                    print("error6")
                     act = 0
-            else:
-                print("error6")
+                if (act == 1):
+                    move(people,s_pos, e_pos, chess)
+                else:
+                    pass
+            else:#吃子翻
                 act = 0
-            if (act == 1):
-                move(1,s_pos, e_pos, chess)
-            else:
-                pass
+                if (s_pos[0] - e_pos[0]) == 0:
+                    if s_pos[1] < e_pos[1]:
+                        for i in range(s_pos[1] + 1, e_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error1")
+                                act = act + 1
+
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[1] > e_pos[1]:
+                        for i in range(e_pos[1] + 1, s_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error2")
+                                act = act + 1
+
+                    # move(s_pos, e_pos,chess)
+                elif (s_pos[1] - e_pos[1]) == 0:
+                    if s_pos[0] < e_pos[0]:
+                        for i in range(s_pos[0] + 1, e_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error3")
+                                act = act + 1
+                        # move(s_pos,e_pos,chess)
+                    if s_pos[0] > e_pos[0]:
+                        for i in range(e_pos[0] + 1, s_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error4")
+                                act = act + 1
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[0] == e_pos[0]:
+                        print("error5")
+                        act = 0
+                else:
+                    print("error6")
+                    act = 0
+                if (act == 1):
+                    move(people,s_pos, e_pos, chess)
+                else:
+                    pass
+
         if chess[0] == '兵':
             if s_pos[1]<5:
                 if s_pos[0]==e_pos[0] and e_pos[1]-s_pos[1]==1:
-                    move(1,s_pos,e_pos,chess)
+                    move(people,s_pos,e_pos,chess)
                 else:
                     print("error1!")
             else:
                 if ((s_pos[0] == e_pos[0]) and (e_pos[1] - s_pos[1] == 1)) \
                         or ((s_pos[1] - e_pos[1] == 0
                             ) and (abs(s_pos[0] - e_pos[0] )== 1)):
-                    move(1,s_pos,e_pos,chess)
+                    move(people,s_pos,e_pos,chess)
                 else:
                     print("error2!")
-    if people == 1:  # 黑棋
+    if people == 1 or people == 3:  # 黑棋
         print("dsdfsdfsdfs")
         chess = get_black_chess(s_pos)
         if chess[0] == '将':
@@ -338,7 +389,7 @@ def way(people, s_pos, e_pos):
                         (abs(s_pos[0] - e_pos[0]) == 0 and abs(s_pos[1] - e_pos[1]) == 1):
                     print(s_pos, e_pos)
 
-                    move(0,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("ERROR!")
             else:
@@ -349,7 +400,7 @@ def way(people, s_pos, e_pos):
                         (abs(s_pos[0] - e_pos[0]) == 1 and abs(s_pos[1] - e_pos[1]) == 1):
 
                     print(s_pos, e_pos)
-                    move(1,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
 
                 else:
                     print("ERROR!")
@@ -361,7 +412,7 @@ def way(people, s_pos, e_pos):
                         (abs(s_pos[0] - e_pos[0]) == 2 and abs(s_pos[1] - e_pos[1]) == 2):
                     print(s_pos, e_pos)
 
-                    move(0,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("ERROR!")
             else:
@@ -369,12 +420,12 @@ def way(people, s_pos, e_pos):
         if chess[0] == '马':
             if abs(e_pos[0] - s_pos[0]) == 1 and abs(e_pos[1] - s_pos[1]) == 2:
                 if position[int((e_pos[1] + s_pos[1]) / 2)][s_pos[0]] == 0:
-                    move(0,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("error1")
             elif abs(e_pos[0] - s_pos[0]) == 2 and abs(e_pos[1] - s_pos[1]) == 1:
                 if position[s_pos[1]][int((e_pos[0] + s_pos[0]) / 2)] == 0:
-                    move(0,s_pos, e_pos, chess)
+                    move(people,s_pos, e_pos, chess)
                 else:
                     print("error2")
             else:
@@ -418,64 +469,101 @@ def way(people, s_pos, e_pos):
                 print("error6")
                 act = 0
             if (act == 1):
-                move(0
-                     ,s_pos, e_pos, chess)
+                move(people,s_pos, e_pos, chess)
             else:
                 pass
         if chess[0] == '炮':
-
-            act = 1
-            if (s_pos[0] - e_pos[0]) == 0:
-                if s_pos[1] < e_pos[1]:
-                    for i in range(s_pos[1] + 1, e_pos[1]):
-                        if position[i][s_pos[0]] != 0:
-                            print("error1")
-                            act = 0
-                            break
+            if people == 1:
+                act = 1
+                if (s_pos[0] - e_pos[0]) == 0:
+                    if s_pos[1] < e_pos[1]:
+                        for i in range(s_pos[1] + 1, e_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error1")
+                                act = 0
+                                break
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[1] > e_pos[1]:
+                        for i in range(e_pos[1] + 1, s_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error2")
+                                act = 0
+                                break
                     # move(s_pos, e_pos,chess)
-                if s_pos[1] > e_pos[1]:
-                    for i in range(e_pos[1] + 1, s_pos[1]):
-                        if position[i][s_pos[0]] != 0:
-                            print("error2")
-                            act = 0
-                            break
-                # move(s_pos, e_pos,chess)
-            elif (s_pos[1] - e_pos[1]) == 0:
-                if s_pos[0] < e_pos[0]:
-                    for i in range(s_pos[0] + 1, e_pos[0]):
-                        if position[s_pos[1]][i] != 0:
-                            print("error3")
-                            act = 0
-                            break
-                    # move(s_pos,e_pos,chess)
-                if s_pos[0] > e_pos[0]:
-                    for i in range(e_pos[0] + 1, s_pos[0]):
-                        if position[s_pos[1]][i] != 0:
-                            print("error4")
-                            act = 0
-                            break
-                    # move(s_pos, e_pos,chess)
-                if s_pos[0] == e_pos[0]:
-                    print("error5")
+                elif (s_pos[1] - e_pos[1]) == 0:
+                    if s_pos[0] < e_pos[0]:
+                        for i in range(s_pos[0] + 1, e_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error3")
+                                act = 0
+                                break
+                        # move(s_pos,e_pos,chess)
+                    if s_pos[0] > e_pos[0]:
+                        for i in range(e_pos[0] + 1, s_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error4")
+                                act = 0
+                                break
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[0] == e_pos[0]:
+                        print("error5")
+                        act = 0
+                else:
+                    print("error6")
                     act = 0
+                if (act == 1):
+                    move(people,s_pos, e_pos, chess)
+                else:
+                    pass
             else:
-                print("error6")
                 act = 0
-            if (act == 1):
-                move(0,s_pos, e_pos, chess)
-            else:
-                pass
+                if (s_pos[0] - e_pos[0]) == 0:
+                    if s_pos[1] < e_pos[1]:
+                        for i in range(s_pos[1] + 1, e_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error1")
+                                act = act + 1
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[1] > e_pos[1]:
+                        for i in range(e_pos[1] + 1, s_pos[1]):
+                            if position[i][s_pos[0]] != 0:
+                                print("error2")
+                                act = act + 1
+                    # move(s_pos, e_pos,chess)
+                elif (s_pos[1] - e_pos[1]) == 0:
+                    if s_pos[0] < e_pos[0]:
+                        for i in range(s_pos[0] + 1, e_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error3")
+                                act = act + 1
+                        # move(s_pos,e_pos,chess)
+                    if s_pos[0] > e_pos[0]:
+                        for i in range(e_pos[0] + 1, s_pos[0]):
+                            if position[s_pos[1]][i] != 0:
+                                print("error4")
+                                act = act + 1
+                        # move(s_pos, e_pos,chess)
+                    if s_pos[0] == e_pos[0]:
+                        print("error5")
+                        act = 0
+                else:
+                    print("error6")
+                    act = 0
+                if (act == 1):
+                    move(people, s_pos, e_pos, chess)
+                else:
+                    pass
         if chess[0] == '卒':
             if s_pos[1]>4:
                 if s_pos[0]==e_pos[0] and e_pos[1]-s_pos[1]==-1:
-                    move(0,s_pos,e_pos,chess)
+                    move(people,s_pos,e_pos,chess)
                 else:
                     print("error1!")
             else:
                 if ((s_pos[0] == e_pos[0]) and (e_pos[1] - s_pos[1] == -1)) \
                         or ((s_pos[1] - e_pos[1] == 0
                             ) and (abs(s_pos[0] - e_pos[0] )== 1)):
-                    move(0,s_pos,e_pos,chess)
+                    move(people,s_pos,e_pos,chess)
                 else:
                     print("error2!")
 
@@ -524,17 +612,27 @@ def chess_move():
             print(begin)
             # print("dsd")
 
-            if position[y][x] == 0:  # 位置为空
+            if position[y][x] == 0:  # 位置为空,移动
                 global start_pos, chess,master
                 if master==True:
                     way(0, start_pos, end_pos)
-                    master = not master
+                    print("h1y")
                 else:
                     way(1,start_pos,end_pos)
-                    master = not master
+                    print("h2y")
 
             else:
-                print("zijide qi")
+                if master == True and position[y][x]>7:#红棋吃子
+                    way(2, start_pos, end_pos)
+                    print("h1xc")
+                if master == False and position[y][x]<8:#黑旗吃子
+                    way(3, start_pos, end_pos)
+                    print("h2w")
+                else:
+                    print("zijide qi")
+
+
+            master = not master
         else:
             print("请选择正确的位置！！！")
             pass
